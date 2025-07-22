@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Code Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        textarea {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white h-full flex flex-col antialiased">
+
+    <div class="flex-grow flex flex-col p-4 sm:p-6 md:p-8">
+        <label for="code-input" class="sr-only">Paste your code here</label>
+        <textarea 
+            id="codeInput"
+            class="w-full flex-grow bg-gray-800 border border-gray-700 rounded-lg p-4 text-sm text-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-shadow duration-200 resize-none"
+            placeholder="Paste your code here..."
+        ></textarea>
+        
+        <div class="mt-4 flex justify-end">
+            <button 
+                id="downloadButton"
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50"
+            >
+                Download index.html
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Download Functionality ---
+        // This script handles the logic for downloading the content of the textarea as a file.
+
+        // Find the button and textarea elements in the document
+        const downloadButton = document.getElementById('downloadButton');
+        const codeInput = document.getElementById('codeInput');
+
+        /**
+         * Downloads the content of the textarea as a file named 'index.html'.
+         */
+        function downloadFile() {
+            // 1. Get the current text from the textarea.
+            const content = codeInput.value;
+
+            // 2. Create a Blob (Binary Large Object) from the content.
+            // A Blob is a file-like object of immutable, raw data.
+            // We specify the MIME type as 'text/html' so the browser knows how to handle it.
+            const blob = new Blob([content], { type: 'text/html;charset=utf-s8' });
+
+            // 3. Create a temporary anchor (<a>) element to trigger the download.
+            // This element is never shown to the user.
+            const link = document.createElement('a');
+
+            // 4. Create a URL for the Blob and assign it to the anchor's href attribute.
+            link.href = URL.createObjectURL(blob);
+
+            // 5. Set the 'download' attribute of the anchor. This tells the browser
+            // to download the file instead of navigating to the URL.
+            // The value of the attribute is the suggested filename.
+            link.download = 'index.html';
+
+            // 6. Programmatically click the link to start the download.
+            document.body.appendChild(link); // Required for Firefox
+            link.click();
+
+            // 7. Clean up by removing the temporary link from the document.
+            document.body.removeChild(link);
+            
+            // 8. Revoke the object URL to free up memory.
+            URL.revokeObjectURL(link.href);
+        }
+
+        // Add a click event listener to the button.
+        // When the button is clicked, the downloadFile function will be executed.
+        downloadButton.addEventListener('click', downloadFile);
+    </script>
+</body>
+</html>
